@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <meta charset="UTF-8" />
+        <title>Hello World</title>
+        <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+        <!-- Don't use this in production: -->
+        <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+        <div id="root"></div>
+        <script type="text/babel">
+                const MyContext = React.createContext()
+                const ThemeContext = React.createContext()
+
+                const CombinedContextProvider = ({greeting, color, children}) => <MyContext.Provider value={greeting}>
+                        <ThemeContext.Provider value={color}>
+                                {children}
+                        </ThemeContext.Provider>
+                        </MyContext.Provider>
+                
+                const CombinedContextConsumer = ({children}) =>  (<MyContext.Consumer>
+                                {greeting => <ThemeContext.Consumer>
+                                                {color => children({greeting, color})}
+                                        </ThemeContext.Consumer>
+                        }
+                        </MyContext.Consumer>)
+
+                const OuterComponent = () => (<div><MiddleComponent/></div>)
+                const MiddleComponent = () => (<div><InnerComponent/></div>)
+                const InnerComponent = () => (
+                        <CombinedContextConsumer>
+                                                {({greeting, color}) => <div style={{color:color}}>Hello {greeting}</div>}
+                        </CombinedContextConsumer>
+                )
+
+                const root = <CombinedContextProvider greeting="world" color="red">
+                        <OuterComponent/>
+                        </CombinedContextProvider>
+
+                ReactDOM.render(root, document.getElementById('root'))
+
+        </script>
+
+</body>
+
+</html>
